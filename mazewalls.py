@@ -14,6 +14,7 @@ class Mazewalls:
         scale_size = (self.image_size[0] * 5, self.image_size[1] * 5)
         self.image = pygame.transform.scale(self.image, scale_size)
         self.image_size = self.image.get_size()
+        self.image = pygame.mask.from_surface(self.image)
 
     def move_direction(self, direction):
         if direction == "right":

@@ -13,6 +13,7 @@ SCREEN_HEIGHT = 800
 SCREEN_WIDTH = 800
 size = (SCREEN_WIDTH, SCREEN_HEIGHT)
 screen = pygame.display.set_mode(size)
+movement = True
 
 
 r = 118
@@ -36,18 +37,19 @@ run = True
 while run:
         # Movement
     keys = pygame.key.get_pressed()  # checking pressed keys
-    if keys[pygame.K_d]:
-        mf.move_direction("right")
-        mw.move_direction("right")
-    if keys[pygame.K_a]:
-        mf.move_direction("left")
-        mw.move_direction("left")
-    if keys[pygame.K_w]:
-        mf.move_direction("up")
-        mw.move_direction("up")
-    if keys[pygame.K_s]:
-        mf.move_direction("down")
-        mw.move_direction("down")
+    if movement:
+        if keys[pygame.K_d]:
+            mf.move_direction("right")
+            mw.move_direction("right")
+        if keys[pygame.K_a]:
+            mf.move_direction("left")
+            mw.move_direction("left")
+        if keys[pygame.K_w]:
+            mf.move_direction("up")
+            mw.move_direction("up")
+        if keys[pygame.K_s]:
+            mf.move_direction("down")
+            mw.move_direction("down")
 
     # --- Main event loop
     ## ----- NO BLIT ZONE START ----- ##
@@ -55,6 +57,8 @@ while run:
         if event.type == pygame.QUIT:  
             run = False
 
+    if mw.image.collide_mask(p.rect):
+        movement = False
 
     ##  ----- NO BLIT ZONE END  ----- ##
 
