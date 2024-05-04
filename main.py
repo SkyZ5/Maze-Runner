@@ -18,10 +18,10 @@ size = (SCREEN_WIDTH, SCREEN_HEIGHT)
 screen = pygame.display.set_mode(size)
 movement = True
 collided = False
-hit_top = False
-hit_right = False
-hit_left = False
-hit_down = False
+collisiony=False
+collisionx=False
+COLLISION_DIRECTION_X = "RIGHT"
+COLLISION_DIRECTION_y = "UP"
 
 
 r = 118
@@ -54,32 +54,56 @@ while run:
         if keys[pygame.K_d]:
             mf.move_direction("right")
             mw.move_direction("right")
-            if collided:
-                hit_right = True
         if keys[pygame.K_a]:
             mf.move_direction("left")
             mw.move_direction("left")
-            if collided:
-                hit_left = True
         if keys[pygame.K_w]:
             mf.move_direction("up")
             mw.move_direction("up")
-            if collided:
-                hit_top = True
         if keys[pygame.K_s]:
             mf.move_direction("down")
             mw.move_direction("down")
-            if collided:
-                hit_down = True
         pos = (mw.x, mw.y)
+
+        if keys[pygame.K_w]:
+            COLLISION_DIRECTION_Y = "UP"
+        elif keys[pygame.K_s]:
+            COLLISION_DIRECTION_Y = "DOWN"
+
+        if keys[pygame.K_d]:
+            COLLISION_DIRECTION_X = "RIGHT"
+        elif keys[pygame.K_a]:
+            COLLISION_DIRECTION_X = "LEFT"
         
     
-    if player_mask.overlap(walls_mask, (pos[0] - 350, pos[1] - 350)):
-        print("colliding")
-        collided = True
-    else:
+    if player_mask.overlap(walls_mask, (pos[0] - 350, pos[1] - 350)) is None:
         print("not colliding")
-        collided = False
+        collided = True
+        lastPos = [mw.x, mw.y]
+        collisiony=False
+        collisionx=False
+    else:
+        print("colliding")
+        if not collisionx and collided:
+            if COLLISION_DIRECTION_Y == "UP":
+                collisiony = True
+                mw.y = (lastPos[1]-0.5)
+                mf.y = (lastPos[1]-0.5)
+            elif COLLISION_DIRECTION_Y == "DOWN":
+                collisiony = True
+                mw.y = (lastPos[1]+0.5)
+                mf.y = (lastPos[1]+0.5)
+
+        if not collisiony and collided:
+            if COLLISION_DIRECTION_X == "LEFT":
+                collisionx = True
+                mw.x = (lastPos[0]-0.5)
+                mf.x = (lastPos[0]-0.5)
+            elif COLLISION_DIRECTION_X == "RIGHT":
+                collisionx = True
+                mw.x = (lastPos[0]+0.5)
+                mf.x = (lastPos[0]+0.5)
+
     # --- Main event loop
     ## ----- NO BLIT ZONE START ----- ##
     for event in pygame.event.get():  
