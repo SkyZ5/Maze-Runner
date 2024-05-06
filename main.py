@@ -18,11 +18,6 @@ size = (SCREEN_WIDTH, SCREEN_HEIGHT)
 screen = pygame.display.set_mode(size)
 movement = True
 collided = False
-collisiony=False
-collisionx=False
-COLLISION_DIRECTION_X = "RIGHT"
-COLLISION_DIRECTION_y = "UP"
-
 
 r = 118
 g = 59
@@ -60,24 +55,37 @@ while run:
         if keys[pygame.K_d]:
             mf.move_direction("right")
             mw.move_direction("right")
+            
         if keys[pygame.K_a]:
             mf.move_direction("left")
             mw.move_direction("left")
+            
         if keys[pygame.K_w]:
             mf.move_direction("up")
             mw.move_direction("up")
+            
         if keys[pygame.K_s]:
             mf.move_direction("down")
             mw.move_direction("down")
-        pos = (mw.x, mw.y)
         
-    
-    if player_mask.overlap(walls_mask, (pos[0] - 350, pos[1] - 350)):
-        print("colliding")
-        collided = True
-    else:
-        print("not colliding")
-        collided = False
+        pos = (mw.x, mw.y)
+
+    if top_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 350)) is None:
+            lastPos = [mw.x, mw.y]
+    if top_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 350)):
+        mw.y = (lastPos[1] - 0.5)
+        mf.y = (lastPos[1] - 0.5)
+    if left_mask.overlap(walls_mask, (pos[0] - 350, pos[1] - 385)):
+        mw.x = (lastPos[0] - 0.5)
+        mf.x = (lastPos[0] - 0.5)
+    if right_mask.overlap(walls_mask, (pos[0] - 420, pos[1] - 385)):
+        mw.x = (lastPos[0] + 0.5)
+        mf.x = (lastPos[0] + 0.5)
+    if bottom_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 420)):
+        mw.y = (lastPos[1] + 0.5)
+        mf.y = (lastPos[1] + 0.5)
+
+
     # --- Main event loop
     ## ----- NO BLIT ZONE START ----- ##
     for event in pygame.event.get():  
@@ -93,13 +101,9 @@ while run:
     screen.blit(mw.image, mw.rect)
     screen.blit(mf.image, mf.rect)
     screen.blit(p.image, p.rect)
-    screen.blit(top, (385, 350))
-    screen.blit(left, (350, 385))
-    screen.blit(right, (420, 385))
-    screen.blit(bottom, (385, 420))
+
     pygame.display.update()
     ## END OF WHILE LOOP
 
 # Once we have exited the main program loop we can stop the game engine:
 pygame.quit()
-
