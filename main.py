@@ -73,17 +73,17 @@ while run:
     if top_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 350)) is None:
             lastPos = [mw.x, mw.y]
     if top_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 350)):
-        mw.y = (lastPos[1] - 0.5)
-        mf.y = (lastPos[1] - 0.5)
+        mw.y = (lastPos[1] - 1)
+        mf.y = (lastPos[1] - 1)
     if left_mask.overlap(walls_mask, (pos[0] - 350, pos[1] - 385)):
-        mw.x = (lastPos[0] - 0.5)
-        mf.x = (lastPos[0] - 0.5)
+        mw.x = (lastPos[0] - 1)
+        mf.x = (lastPos[0] - 1)
     if right_mask.overlap(walls_mask, (pos[0] - 420, pos[1] - 385)):
-        mw.x = (lastPos[0] + 0.5)
-        mf.x = (lastPos[0] + 0.5)
+        mw.x = (lastPos[0] + 1)
+        mf.x = (lastPos[0] + 1)
     if bottom_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 420)):
-        mw.y = (lastPos[1] + 0.5)
-        mf.y = (lastPos[1] + 0.5)
+        mw.y = (lastPos[1] + 1)
+        mf.y = (lastPos[1] + 1)
 
 
     # --- Main event loop
