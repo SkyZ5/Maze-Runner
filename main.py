@@ -32,15 +32,21 @@ b = 54
 # render the text for later
 
 
-
-# Instantiate the apple
 mf = Mazefloors(0, -3200)
 mw = Mazewalls(0, -3200)
 p = Player(350, 350)
+top = pygame.Surface((10, 10))
+left = pygame.Surface((10, 10))
+right = pygame.Surface((10, 10))
+bottom = pygame.Surface((10, 10))
 walls_mask = mw.image_mask
 player_mask = p.image_mask
 wmask_image = walls_mask.to_surface()
 pmask_image = player_mask.to_surface()
+top_mask = pygame.mask.from_surface(top)
+left_mask = pygame.mask.from_surface(left)
+right_mask = pygame.mask.from_surface(right)
+bottom_mask = pygame.mask.from_surface(bottom)
 
 
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
@@ -64,46 +70,14 @@ while run:
             mf.move_direction("down")
             mw.move_direction("down")
         pos = (mw.x, mw.y)
-
-        if keys[pygame.K_w]:
-            COLLISION_DIRECTION_Y = "UP"
-        elif keys[pygame.K_s]:
-            COLLISION_DIRECTION_Y = "DOWN"
-
-        if keys[pygame.K_d]:
-            COLLISION_DIRECTION_X = "RIGHT"
-        elif keys[pygame.K_a]:
-            COLLISION_DIRECTION_X = "LEFT"
         
     
-    if player_mask.overlap(walls_mask, (pos[0] - 350, pos[1] - 350)) is None:
-        print("not colliding")
-        collided = True
-        lastPos = [mw.x, mw.y]
-        collisiony=False
-        collisionx=False
-    else:
+    if player_mask.overlap(walls_mask, (pos[0] - 350, pos[1] - 350)):
         print("colliding")
-        if not collisionx and collided:
-            if COLLISION_DIRECTION_Y == "UP":
-                collisiony = True
-                mw.y = (lastPos[1]-0.5)
-                mf.y = (lastPos[1]-0.5)
-            elif COLLISION_DIRECTION_Y == "DOWN":
-                collisiony = True
-                mw.y = (lastPos[1]+0.5)
-                mf.y = (lastPos[1]+0.5)
-
-        if not collisiony and collided:
-            if COLLISION_DIRECTION_X == "LEFT":
-                collisionx = True
-                mw.x = (lastPos[0]-0.5)
-                mf.x = (lastPos[0]-0.5)
-            elif COLLISION_DIRECTION_X == "RIGHT":
-                collisionx = True
-                mw.x = (lastPos[0]+0.5)
-                mf.x = (lastPos[0]+0.5)
-
+        collided = True
+    else:
+        print("not colliding")
+        collided = False
     # --- Main event loop
     ## ----- NO BLIT ZONE START ----- ##
     for event in pygame.event.get():  
@@ -119,6 +93,10 @@ while run:
     screen.blit(mw.image, mw.rect)
     screen.blit(mf.image, mf.rect)
     screen.blit(p.image, p.rect)
+    screen.blit(top, (385, 350))
+    screen.blit(left, (350, 385))
+    screen.blit(right, (420, 385))
+    screen.blit(bottom, (385, 420))
     pygame.display.update()
     ## END OF WHILE LOOP
 
