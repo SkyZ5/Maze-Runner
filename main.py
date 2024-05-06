@@ -32,15 +32,21 @@ b = 54
 # render the text for later
 
 
-
-# Instantiate the apple
 mf = Mazefloors(0, -3200)
 mw = Mazewalls(0, -3200)
 p = Player(350, 350)
+top = pygame.Surface((10, 10))
+left = pygame.Surface((10, 10))
+right = pygame.Surface((10, 10))
+bottom = pygame.Surface((10, 10))
 walls_mask = mw.image_mask
 player_mask = p.image_mask
 wmask_image = walls_mask.to_surface()
 pmask_image = player_mask.to_surface()
+top_mask = pygame.mask.from_surface(top)
+left_mask = pygame.mask.from_surface(left)
+right_mask = pygame.mask.from_surface(right)
+bottom_mask = pygame.mask.from_surface(bottom)
 
 
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
@@ -72,14 +78,24 @@ while run:
             if collided:
                 hit_down = True
         pos = (mw.x, mw.y)
-        
+
+    if top_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 350)) is None:
+            lastPos = [mw.x, mw.y]
     
-    if player_mask.overlap(walls_mask, (pos[0] - 350, pos[1] - 350)):
-        print("colliding")
-        collided = True
-    else:
-        print("not colliding")
-        collided = False
+    if top_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 350)):
+        mw.y = (lastPos[1] - 0.5)
+        mf.y = (lastPos[1] - 0.5)
+    if left_mask.overlap(walls_mask, (pos[0] - 350, pos[1] - 385)):
+        mw.x = (lastPos[1] - 0.5)
+        mf.x = (lastPos[1] - 0.5)
+    if right_mask.overlap(walls_mask, (pos[0] - 420, pos[1] - 385)):
+        mw.x = (lastPos[1] + 0.5)
+        mf.x = (lastPos[1] + 0.5)
+    if bottom_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 420)):
+        mw.y = (lastPos[1] + 0.5)
+        mf.y = (lastPos[1] + 0.5)
+
+
     # --- Main event loop
     ## ----- NO BLIT ZONE START ----- ##
     for event in pygame.event.get():  
@@ -95,6 +111,10 @@ while run:
     screen.blit(mw.image, mw.rect)
     screen.blit(mf.image, mf.rect)
     screen.blit(p.image, p.rect)
+    screen.blit(top, (385, 350))
+    screen.blit(left, (350, 385))
+    screen.blit(right, (420, 385))
+    screen.blit(bottom, (385, 420))
     pygame.display.update()
     ## END OF WHILE LOOP
 
