@@ -3,12 +3,13 @@ from mazewalls import Mazewalls
 from mazefloor import Mazefloors
 from player import Player
 
+
 # set up pygame modules
 pygame.init()
 pygame.font.init()
 pygame.display.set_caption("Maze Runner")
 
-#hides mouse
+# hides mouse
 pygame.mouse.set_visible(False)
 
 # set up variables for the display
@@ -16,8 +17,7 @@ SCREEN_HEIGHT = 800
 SCREEN_WIDTH = 800
 size = (SCREEN_WIDTH, SCREEN_HEIGHT)
 screen = pygame.display.set_mode(size)
-movement = True
-collided = False
+light = pygame.image.load('circle.png')
 
 r = 118
 g = 59
@@ -51,24 +51,24 @@ run = True
 while run:
         # Movement
     keys = pygame.key.get_pressed()  # checking pressed keys
-    if movement:
-        if keys[pygame.K_d]:
-            mf.move_direction("right")
-            mw.move_direction("right")
+
+    if keys[pygame.K_d]:
+        mf.move_direction("right")
+        mw.move_direction("right")
             
-        if keys[pygame.K_a]:
-            mf.move_direction("left")
-            mw.move_direction("left")
+    if keys[pygame.K_a]:
+        mf.move_direction("left")
+        mw.move_direction("left")
             
-        if keys[pygame.K_w]:
-            mf.move_direction("up")
-            mw.move_direction("up")
+    if keys[pygame.K_w]:
+        mf.move_direction("up")
+        mw.move_direction("up")
             
-        if keys[pygame.K_s]:
-            mf.move_direction("down")
-            mw.move_direction("down")
+    if keys[pygame.K_s]:
+        mf.move_direction("down")
+        mw.move_direction("down")
         
-        pos = (mw.x, mw.y)
+    pos = (mw.x, mw.y)
 
     if top_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 350)) is None:
             lastPos = [mw.x, mw.y]
@@ -85,7 +85,6 @@ while run:
         mw.y = (lastPos[1] + 1)
         mf.y = (lastPos[1] + 1)
 
-
     # --- Main event loop
     ## ----- NO BLIT ZONE START ----- ##
     for event in pygame.event.get():  
@@ -101,7 +100,10 @@ while run:
     screen.blit(mw.image, mw.rect)
     screen.blit(mf.image, mf.rect)
     screen.blit(p.image, p.rect)
-
+    filter = pygame.surface.Surface((640, 480))
+    filter.fill(pygame.color.Color('Grey'))
+    filter.blit(light, map(lambda x: x - 50, pygame.mouse.get_pos()))
+    screen.blit(filter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
     pygame.display.update()
     ## END OF WHILE LOOP
 
