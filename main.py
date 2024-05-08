@@ -42,6 +42,8 @@ top_mask = pygame.mask.from_surface(top)
 left_mask = pygame.mask.from_surface(left)
 right_mask = pygame.mask.from_surface(right)
 bottom_mask = pygame.mask.from_surface(bottom)
+filter = pygame.surface.Surface((640, 480))
+filter.fill(pygame.color.Color('Grey'))
 
 
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
@@ -100,11 +102,10 @@ while run:
     screen.blit(mw.image, mw.rect)
     screen.blit(mf.image, mf.rect)
     screen.blit(p.image, p.rect)
-    filter = pygame.surface.Surface((640, 480))
-    filter.fill(pygame.color.Color('Grey'))
-    filter.blit(light, map(lambda x: x - 50, pygame.mouse.get_pos()))
+    filter.blit(light, (350, 350))
     screen.blit(filter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
     pygame.display.update()
+    pygame.display.flip()
     ## END OF WHILE LOOP
 
 # Once we have exited the main program loop we can stop the game engine:
