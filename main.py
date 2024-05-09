@@ -18,6 +18,8 @@ SCREEN_WIDTH = 800
 size = (SCREEN_WIDTH, SCREEN_HEIGHT)
 screen = pygame.display.set_mode(size)
 light = pygame.image.load('circle.png')
+filtered = False
+
 
 r = 118
 g = 59
@@ -42,7 +44,7 @@ top_mask = pygame.mask.from_surface(top)
 left_mask = pygame.mask.from_surface(left)
 right_mask = pygame.mask.from_surface(right)
 bottom_mask = pygame.mask.from_surface(bottom)
-filter = pygame.surface.Surface((640, 480))
+filter = pygame.surface.Surface((800, 800))
 filter.fill(pygame.color.Color('Grey'))
 
 
@@ -102,7 +104,9 @@ while run:
     screen.blit(mw.image, mw.rect)
     screen.blit(mf.image, mf.rect)
     screen.blit(p.image, p.rect)
-    filter.blit(light, (350, 350))
+    if not filtered:
+        filter.blit(light, (300, 300))
+        filtered = True
     screen.blit(filter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
     pygame.display.update()
     pygame.display.flip()
