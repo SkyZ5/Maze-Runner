@@ -2,6 +2,7 @@ import pygame
 from mazewalls import Mazewalls
 from mazefloor import Mazefloors
 from player import Player
+from zombie import Zombie
 
 
 # set up pygame modules
@@ -10,7 +11,7 @@ pygame.font.init()
 pygame.display.set_caption("Maze Runner")
 
 # hides mouse
-pygame.mouse.set_visible(False)
+# pygame.mouse.set_visible(False)
 
 # set up variables for the display
 SCREEN_HEIGHT = 800
@@ -32,6 +33,8 @@ b = 54
 mf = Mazefloors(0, -3200)
 mw = Mazewalls(0, -3200)
 p = Player(350, 350)
+z1 = Zombie(350, 350)
+z2 = Zombie(360, 360)
 top = pygame.Surface((10, 10))
 left = pygame.Surface((10, 10))
 right = pygame.Surface((10, 10))
@@ -59,35 +62,53 @@ while run:
     if keys[pygame.K_d]:
         mf.move_direction("right")
         mw.move_direction("right")
+        z1.move_direction("right")
+        z2.move_direction("right")
             
     if keys[pygame.K_a]:
         mf.move_direction("left")
         mw.move_direction("left")
+        z1.move_direction("left")
+        z2.move_direction("left")
             
     if keys[pygame.K_w]:
         mf.move_direction("up")
         mw.move_direction("up")
+        z1.move_direction("up")
+        z2.move_direction("up")
             
     if keys[pygame.K_s]:
         mf.move_direction("down")
         mw.move_direction("down")
+        z1.move_direction("down")
+        z2.move_direction("down")
         
     pos = (mw.x, mw.y)
 
     if top_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 350)) is None:
             lastPos = [mw.x, mw.y]
+            lastPosz1 = [z1.x, z1.y]
+            lastPosz2 = [z2.x, z2.y]
     if top_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 350)):
         mw.y = (lastPos[1] - 1)
         mf.y = (lastPos[1] - 1)
+        z1.y = (lastPosz1[1] - 1)
+        z2.y = (lastPosz2[1] - 1)
     if left_mask.overlap(walls_mask, (pos[0] - 350, pos[1] - 385)):
         mw.x = (lastPos[0] - 1)
         mf.x = (lastPos[0] - 1)
+        z1.y = (lastPosz1[0] - 1)
+        z2.y = (lastPosz2[0] - 1)
     if right_mask.overlap(walls_mask, (pos[0] - 420, pos[1] - 385)):
         mw.x = (lastPos[0] + 1)
         mf.x = (lastPos[0] + 1)
+        z1.y = (lastPosz1[0] + 1)
+        z2.y = (lastPosz2[0] + 1)
     if bottom_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 420)):
         mw.y = (lastPos[1] + 1)
         mf.y = (lastPos[1] + 1)
+        z1.y = (lastPosz1[1] + 1)
+        z2.y = (lastPosz2[1] + 1)
 
     # --- Main event loop
     ## ----- NO BLIT ZONE START ----- ##
@@ -103,9 +124,11 @@ while run:
     screen.fill((r, g, b))
     screen.blit(mw.image, mw.rect)
     screen.blit(mf.image, mf.rect)
+    screen.blit(z1.image, z1.rect)
+    screen.blit(z2.image, z2.rect)
     screen.blit(p.image, p.rect)
     if not filtered:
-        filter.blit(light, (300, 300))
+        filter.blit(light, (-100, -100))
         filtered = True
     screen.blit(filter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
     pygame.display.update()
