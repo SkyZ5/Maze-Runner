@@ -33,7 +33,7 @@ b = 54
 mf = Mazefloors(0, -3200)
 mw = Mazewalls(0, -3200)
 p = Player(350, 350)
-z1 = Zombie(350, 350)
+z1 = Zombie(360, 360)
 z2 = Zombie(360, 360)
 top = pygame.Surface((10, 10))
 left = pygame.Surface((10, 10))
@@ -56,7 +56,8 @@ run = True
 
 # -------- Main Program Loop -----------
 while run:
-        # Movement
+    
+    # Movement
     keys = pygame.key.get_pressed()  # checking pressed keys
 
     if keys[pygame.K_d]:
@@ -82,13 +83,13 @@ while run:
         mw.move_direction("down")
         z1.move_direction("down")
         z2.move_direction("down")
-        
+    
     pos = (mw.x, mw.y)
 
     if top_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 350)) is None:
-            lastPos = [mw.x, mw.y]
-            lastPosz1 = [z1.x, z1.y]
-            lastPosz2 = [z2.x, z2.y]
+        lastPos = [mw.x, mw.y]
+        lastPosz1 = [z1.x, z1.y]
+        lastPosz2 = [z2.x, z2.y]
     if top_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 350)):
         mw.y = (lastPos[1] - 1)
         mf.y = (lastPos[1] - 1)
@@ -97,19 +98,26 @@ while run:
     if left_mask.overlap(walls_mask, (pos[0] - 350, pos[1] - 385)):
         mw.x = (lastPos[0] - 1)
         mf.x = (lastPos[0] - 1)
-        z1.y = (lastPosz1[0] - 1)
-        z2.y = (lastPosz2[0] - 1)
+        z1.x = (lastPosz1[0] - 1)
+        z2.x = (lastPosz2[0] - 1)
     if right_mask.overlap(walls_mask, (pos[0] - 420, pos[1] - 385)):
         mw.x = (lastPos[0] + 1)
         mf.x = (lastPos[0] + 1)
-        z1.y = (lastPosz1[0] + 1)
-        z2.y = (lastPosz2[0] + 1)
+        z1.x = (lastPosz1[0] + 1)
+        z2.x = (lastPosz2[0] + 1)
     if bottom_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 420)):
         mw.y = (lastPos[1] + 1)
         mf.y = (lastPos[1] + 1)
         z1.y = (lastPosz1[1] + 1)
         z2.y = (lastPosz2[1] + 1)
+    
+    # Mob Movement
 
+    zombie_vector = pygame.Vector2(z1.rect.center)
+    player_vector = pygame.Vector2(p.rect.center)
+    distance = zombie_vector.distance_to(player_vector)
+
+    print(distance)
     # --- Main event loop
     ## ----- NO BLIT ZONE START ----- ##
     for event in pygame.event.get():  
