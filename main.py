@@ -1,4 +1,5 @@
 import pygame
+import math
 from mazewalls import Mazewalls
 from mazefloor import Mazefloors
 from player import Player
@@ -33,7 +34,7 @@ b = 54
 mf = Mazefloors(0, -3200)
 mw = Mazewalls(0, -3200)
 p = Player(350, 350)
-z1 = Zombie(360, 360)
+z1 = Zombie(500, 500)
 z2 = Zombie(360, 360)
 top = pygame.Surface((10, 10))
 left = pygame.Surface((10, 10))
@@ -117,7 +118,15 @@ while run:
     player_vector = pygame.Vector2(p.rect.center)
     distance = zombie_vector.distance_to(player_vector)
 
-    print(distance)
+    dx, dy = p.rect.x - z1.rect.x, p.rect.y - z1.rect.y
+    dist = math.hypot(dx, dy)
+    dx, dy = dx / dist, dy / dist
+    if dist < 300:
+        z1.rect.x += dx * z1.speed
+        z1.rect.y += dy * z1.speed
+        z1.x += dx * z1.speed
+        z1.y += dy * z1.speed
+
     # --- Main event loop
     ## ----- NO BLIT ZONE START ----- ##
     for event in pygame.event.get():  
@@ -132,7 +141,7 @@ while run:
     screen.fill((r, g, b))
     screen.blit(mw.image, mw.rect)
     screen.blit(mf.image, mf.rect)
-    screen.blit(z1.image, z1.rect)
+    screen.blit(z1.image, (z1.x, z1.y))
     screen.blit(z2.image, z2.rect)
     screen.blit(p.image, p.rect)
     if not filtered:
