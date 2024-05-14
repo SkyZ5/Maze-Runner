@@ -34,7 +34,7 @@ b = 54
 mf = Mazefloors(0, -3200)
 mw = Mazewalls(0, -3200)
 p = Player(350, 350)
-z1 = Zombie(500, 500)
+z1 = Zombie(900, 350)
 z2 = Zombie(360, 360)
 top = pygame.Surface((10, 10))
 left = pygame.Surface((10, 10))
@@ -42,8 +42,10 @@ right = pygame.Surface((10, 10))
 bottom = pygame.Surface((10, 10))
 walls_mask = mw.image_mask
 player_mask = p.image_mask
+z1_mask = z1.image_mask
 wmask_image = walls_mask.to_surface()
 pmask_image = player_mask.to_surface()
+z1_image = z1_mask.to_surface()
 top_mask = pygame.mask.from_surface(top)
 left_mask = pygame.mask.from_surface(left)
 right_mask = pygame.mask.from_surface(right)
@@ -113,19 +115,11 @@ while run:
         z2.y = (lastPosz2[1] + 1)
     
     # Mob Movement
+    z1.move_towards_player(p)
 
-    zombie_vector = pygame.Vector2(z1.rect.center)
-    player_vector = pygame.Vector2(p.rect.center)
-    distance = zombie_vector.distance_to(player_vector)
-
-    dx, dy = p.rect.x - z1.rect.x, p.rect.y - z1.rect.y
-    dist = math.hypot(dx, dy)
-    dx, dy = dx / dist, dy / dist
-    if dist < 300:
-        z1.rect.x += dx * z1.speed
-        z1.rect.y += dy * z1.speed
-        z1.x += dx * z1.speed
-        z1.y += dy * z1.speed
+    if z1_mask.overlap(walls_mask, (pos[0] - z1.x, pos[1] - z1.y)):
+        z1.x = z1.init_x
+        z1.y = z1.init_y
 
     # --- Main event loop
     ## ----- NO BLIT ZONE START ----- ##
