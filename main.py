@@ -1,5 +1,6 @@
 import pygame
 import math
+import time
 from mazewalls import Mazewalls
 from mazefloor import Mazefloors
 from player import Player
@@ -35,7 +36,7 @@ mf = Mazefloors(0, -3200)
 mw = Mazewalls(0, -3200)
 p = Player(350, 350)
 z1 = Zombie(900, 350)
-z2 = Zombie(360, 360)
+z2 = Zombie(360, 370)
 top = pygame.Surface((10, 10))
 left = pygame.Surface((10, 10))
 right = pygame.Surface((10, 10))
@@ -52,14 +53,17 @@ right_mask = pygame.mask.from_surface(right)
 bottom_mask = pygame.mask.from_surface(bottom)
 filter = pygame.surface.Surface((800, 800))
 filter.fill(pygame.color.Color('Grey'))
+distance_back = 50
 
 
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
 run = True
+clock = pygame.time.Clock()
+frame = 0
 
 # -------- Main Program Loop -----------
 while run:
-    
+    clock.tick(165)
     # Movement
     keys = pygame.key.get_pressed()  # checking pressed keys
 
@@ -120,6 +124,9 @@ while run:
     if z1_mask.overlap(walls_mask, (pos[0] - z1.x, pos[1] - z1.y)):
         z1.x = z1.init_x
         z1.y = z1.init_y
+
+    if z1_mask.overlap(player_mask, (350 - z1.x, 350 - z1.y)):
+        z1.x -= 50
 
     # --- Main event loop
     ## ----- NO BLIT ZONE START ----- ##

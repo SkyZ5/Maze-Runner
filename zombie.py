@@ -38,10 +38,10 @@ class Zombie:
         self.rect = pygame.Rect(self.x, self.y, self.image_size[0], self.image_size[1])
     
     def move_towards_player(self, player):
-        dx, dy = player.rect.x - self.rect.x, player.rect.y - self.rect.y
+        dx, dy = player.x - self.x, player.y - self.y
         dist = math.hypot(dx, dy)
         dx, dy = dx / dist, dy / dist
-        if dist < 300:
+        if dist < 300  and dist> 10:
             self.rect.x += dx * self.speed
             self.rect.y += dy * self.speed
             self.x += dx * self.speed
