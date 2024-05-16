@@ -9,6 +9,14 @@ class Zombie:
         self.y = y
         self.init_x = x
         self.init_y = y
+        self.top = pygame.Surface((10, 10))
+        self.left = pygame.Surface((10, 10))
+        self.right = pygame.Surface((10, 10))
+        self.bottom = pygame.Surface((10, 10))
+        self.top_mask = pygame.mask.from_surface(self.top)
+        self.left_mask = pygame.mask.from_surface(self.left)
+        self.right_mask = pygame.mask.from_surface(self.right)
+        self.bottom_mask = pygame.mask.from_surface(self.bottom)
         self.image = pygame.image.load("zombie.png").convert_alpha()
         self.image_size = self.image.get_size()
         self.rect = pygame.Rect(self.x, self.y, self.image_size[0], self.image_size[1])
@@ -46,3 +54,4 @@ class Zombie:
             self.rect.y += dy * self.speed
             self.x += dx * self.speed
             self.y += dy * self.speed
+

@@ -54,6 +54,7 @@ bottom_mask = pygame.mask.from_surface(bottom)
 filter = pygame.surface.Surface((800, 800))
 filter.fill(pygame.color.Color('Grey'))
 distance_back = 50
+health = 100
 
 
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
@@ -125,9 +126,20 @@ while run:
         z1.x = z1.init_x
         z1.y = z1.init_y
 
-    if z1_mask.overlap(player_mask, (350 - z1.x, 350 - z1.y)):
-        z1.x -= 50
-
+    if z1_mask.overlap(left_mask, (350 - z1.x, 385 - z1.y)):
+        z1.x -= 100
+        health -= 10
+    if z1_mask.overlap(right_mask, (420 - z1.x, 385 - z1.y)):
+        z1.x += 100
+        health -= 10
+    if z1_mask.overlap(top_mask, (385 - z1.x, 350 - z1.y)):
+        z1.y -= 100
+        health -= 10
+    if z1_mask.overlap(bottom_mask, (385 - z1.x, 420 - z1.y)):
+        z1.y += 100
+        health -= 10
+    
+    print(health)
     # --- Main event loop
     ## ----- NO BLIT ZONE START ----- ##
     for event in pygame.event.get():  
