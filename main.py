@@ -1,6 +1,7 @@
 import pygame
 import math
 import time
+import playerspritesheet
 from mazewalls import Mazewalls
 from mazefloor import Mazefloors
 from player import Player
@@ -39,7 +40,7 @@ p = Player(350, 350)
 z1 = Zombie(900, 350)
 z2 = Zombie(600, 150)
 health = 100
-health_bar = Healthbar(100 , 50, 300, 40, health, 100)
+health_bar = Healthbar(100, 50, 300, 40, health, 100)
 top = pygame.Surface((10, 10))
 left = pygame.Surface((10, 10))
 right = pygame.Surface((10, 10))
@@ -58,7 +59,14 @@ filter = pygame.surface.Surface((800, 800))
 filter.fill(pygame.color.Color('Grey'))
 distance_back = 50
 
+#spritesheets
+player_sprite_sheet_image = pygame.image.load('player_sheet.png').convert_alpha()
 
+def get_image(sheet, frame, width, height, scale, colour):
+    image = pygame.Surface((width, height)).convert_alpha()
+    image.blit(sheet(0, 0), ((frame * width), 0, width, height))
+    image = pygame.transform.scale(image, (width * scale, height * scale))
+    image.set_colorkey(colour)
 
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
 run = True
