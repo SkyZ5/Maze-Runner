@@ -5,6 +5,7 @@ from mazewalls import Mazewalls
 from mazefloor import Mazefloors
 from player import Player
 from zombie import Zombie
+from healthbar import Healthbar
 
 
 # set up pygame modules
@@ -36,7 +37,9 @@ mf = Mazefloors(0, -3200)
 mw = Mazewalls(0, -3200)
 p = Player(350, 350)
 z1 = Zombie(900, 350)
-z2 = Zombie(360, 370)
+z2 = Zombie(600, 150)
+health = 100
+health_bar = Healthbar(100 , 50, 300, 40, health, 100)
 top = pygame.Surface((10, 10))
 left = pygame.Surface((10, 10))
 right = pygame.Surface((10, 10))
@@ -54,7 +57,7 @@ bottom_mask = pygame.mask.from_surface(bottom)
 filter = pygame.surface.Surface((800, 800))
 filter.fill(pygame.color.Color('Grey'))
 distance_back = 50
-health = 100
+
 
 
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
@@ -138,8 +141,7 @@ while run:
     if z1_mask.overlap(bottom_mask, (385 - z1.x, 420 - z1.y)):
         z1.y += 100
         health -= 10
-    
-    print(health)
+
     # --- Main event loop
     ## ----- NO BLIT ZONE START ----- ##
     for event in pygame.event.get():  
@@ -161,6 +163,9 @@ while run:
         filter.blit(light, (-100, -100))
         filtered = True
     screen.blit(filter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+    health_bar.hp = health
+    health_bar.draw(screen)
+    screen.blit(health_bar.image, health_bar.rect)
     pygame.display.update()
     pygame.display.flip()
     ## END OF WHILE LOOP
