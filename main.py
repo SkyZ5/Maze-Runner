@@ -60,13 +60,14 @@ filter.fill(pygame.color.Color('Grey'))
 distance_back = 50
 
 #spritesheets
-player_sprite_sheet_image = pygame.image.load('player_sheet.png').convert_alpha()
+player_sheet_image = pygame.image.load("player_sheet.png").convert_alpha()
+player_sheet = playerspritesheet.Playerspritesheet(player_sheet_image)
 
-def get_image(sheet, frame, width, height, scale, colour):
-    image = pygame.Surface((width, height)).convert_alpha()
-    image.blit(sheet(0, 0), ((frame * width), 0, width, height))
-    image = pygame.transform.scale(image, (width * scale, height * scale))
-    image.set_colorkey(colour)
+animation_list = []
+animation_steps = 4
+
+for i in range(animation_steps):
+    animation_list.append(player_sheet.get_image(i, 5, (255, 255, 255)))
 
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
 run = True
@@ -174,6 +175,10 @@ while run:
     health_bar.hp = health
     health_bar.draw(screen)
     screen.blit(health_bar.image, health_bar.rect)
+
+    for i in range(animation_steps):
+        screen.blit(animation_list[i], (i * 72, 0))
+
     pygame.display.update()
     pygame.display.flip()
     ## END OF WHILE LOOP
