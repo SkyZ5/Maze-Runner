@@ -64,10 +64,19 @@ player_sheet_image = pygame.image.load("player_sheet.png").convert_alpha()
 player_sheet = playerspritesheet.Playerspritesheet(player_sheet_image)
 
 animation_list = []
-animation_steps = 4
+animation_steps = [4, 4, 4, 4]
+action = 3
+last_update = pygame.time.get_ticks()
+animation_cooldown = 200
+frame = 0
+step_counter = 0
 
-for i in range(animation_steps):
-    animation_list.append(player_sheet.get_image(i, 5, (255, 255, 255)))
+for i in (animation_steps):
+    temp_list = []
+    for z in range(i):
+        temp_list.append(player_sheet.get_image(step_counter, 5, (255, 255, 255)))
+        step_counter += 1
+    animation_list.append(temp_list)
 
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
 run = True
@@ -85,25 +94,29 @@ while run:
         mw.move_direction("right")
         z1.move_direction("right")
         z2.move_direction("right")
-            
+        action = 2
+
     if keys[pygame.K_a]:
         mf.move_direction("left")
         mw.move_direction("left")
         z1.move_direction("left")
         z2.move_direction("left")
-            
+        action = 3
+
     if keys[pygame.K_w]:
         mf.move_direction("up")
         mw.move_direction("up")
         z1.move_direction("up")
         z2.move_direction("up")
-            
+        action = 1
+
     if keys[pygame.K_s]:
         mf.move_direction("down")
         mw.move_direction("down")
         z1.move_direction("down")
         z2.move_direction("down")
-    
+        action = 0
+
     pos = (mw.x, mw.y)
 
     if top_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 350)) is None:
@@ -167,7 +180,6 @@ while run:
     screen.blit(mf.image, mf.rect)
     screen.blit(z1.image, (z1.x, z1.y))
     screen.blit(z2.image, z2.rect)
-    screen.blit(p.image, p.rect)
     if not filtered:
         filter.blit(light, (-100, -100))
         filtered = True
@@ -176,12 +188,16 @@ while run:
     health_bar.draw(screen)
     screen.blit(health_bar.image, health_bar.rect)
 
-    for i in range(animation_steps):
-        screen.blit(animation_list[i], (i * 72, 0))
+    current_time = pygame.time.get_ticks()
+    if current_time - last_update >= animation_cooldown:
+        frame += 1
+        last_update = current_time
+        if frame >= len(animation_list[action]):
+            frame = 0
+    screen.blit(animation_list[action][frame], (350, 350))
 
     pygame.display.update()
     pygame.display.flip()
-    ## END OF WHILE LOOP
 
 # Once we have exited the main program loop we can stop the game engine:
 pygame.quit()
