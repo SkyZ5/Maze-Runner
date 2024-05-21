@@ -2,6 +2,7 @@ import pygame
 import math
 import time
 import playerspritesheet
+import zombiespritesheet
 from mazewalls import Mazewalls
 from mazefloor import Mazefloors
 from player import Player
@@ -64,12 +65,13 @@ player_sheet_image = pygame.image.load("player_sheet.png").convert_alpha()
 player_sheet = playerspritesheet.Playerspritesheet(player_sheet_image)
 
 zombie_sheet_image = pygame.image.load("zombie_sheet.png").convert_alpha()
-zombie_sheet = playerspritesheet.Playerspritesheet(player_sheet_image)
+zombie_sheet = zombiespritesheet.Zombiespritesheet(zombie_sheet_image)
 
 animation_list = []
 zombie_list = []
 animation_steps = [4, 4, 4, 4, 4]
 action = 0
+z1_action = 0
 last_update = pygame.time.get_ticks()
 animation_cooldown = 200
 frame = 0
@@ -82,17 +84,20 @@ for i in (animation_steps):
         step_counter += 1
     animation_list.append(temp_list)
 
+step_counter = 0
+
 for i in (animation_steps):
     temp_list = []
     for z in range(i):
         temp_list.append(zombie_sheet.get_image(step_counter, 5, (255, 255, 255)))
         step_counter += 1
-    animation_list.append(temp_list)
+    zombie_list.append(temp_list)
+
 
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
 run = True
 clock = pygame.time.Clock()
-frame = 0
+fr = 0
 
 # -------- Main Program Loop -----------
 while run:
@@ -197,15 +202,15 @@ while run:
     screen.fill((r, g, b))
     screen.blit(mw.image, mw.rect)
     screen.blit(mf.image, mf.rect)
-    screen.blit(z1.image, (z1.x, z1.y))
+    current_time = pygame.time.get_ticks()
+    if current_time - last_update >= animation_cooldown:
+        frame += 1
+        last_update = current_time
+        if frame >= len(zombie_list[z1_action]):
+            frame = 0
+    screen.blit(zombie_list[z1_action][frame], (z1.x, z1.y))
+
     screen.blit(z2.image, z2.rect)
-    if not filtered:
-        filter.blit(light, (-100, -100))
-        filtered = True
-    screen.blit(filter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
-    health_bar.hp = health
-    health_bar.draw(screen)
-    screen.blit(health_bar.image, health_bar.rect)
 
     current_time = pygame.time.get_ticks()
     if current_time - last_update >= animation_cooldown:
@@ -214,6 +219,15 @@ while run:
         if frame >= len(animation_list[action]):
             frame = 0
     screen.blit(animation_list[action][frame], (350, 350))
+
+    if not filtered:
+        filter.blit(light, (-100, -100))
+        filtered = True
+    screen.blit(filter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+
+    health_bar.hp = health
+    health_bar.draw(screen)
+    screen.blit(health_bar.image, health_bar.rect)
 
     pygame.display.update()
     pygame.display.flip()
