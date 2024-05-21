@@ -63,9 +63,13 @@ distance_back = 50
 player_sheet_image = pygame.image.load("player_sheet.png").convert_alpha()
 player_sheet = playerspritesheet.Playerspritesheet(player_sheet_image)
 
+zombie_sheet_image = pygame.image.load("zombie_sheet.png").convert_alpha()
+zombie_sheet = playerspritesheet.Playerspritesheet(player_sheet_image)
+
 animation_list = []
-animation_steps = [4, 4, 4, 4]
-action = 3
+zombie_list = []
+animation_steps = [4, 4, 4, 4, 4]
+action = 0
 last_update = pygame.time.get_ticks()
 animation_cooldown = 200
 frame = 0
@@ -75,6 +79,13 @@ for i in (animation_steps):
     temp_list = []
     for z in range(i):
         temp_list.append(player_sheet.get_image(step_counter, 5, (255, 255, 255)))
+        step_counter += 1
+    animation_list.append(temp_list)
+
+for i in (animation_steps):
+    temp_list = []
+    for z in range(i):
+        temp_list.append(zombie_sheet.get_image(step_counter, 5, (255, 255, 255)))
         step_counter += 1
     animation_list.append(temp_list)
 
@@ -89,33 +100,41 @@ while run:
     # Movement
     keys = pygame.key.get_pressed()  # checking pressed keys
 
+    action = 0
+
     if keys[pygame.K_d]:
         mf.move_direction("right")
         mw.move_direction("right")
         z1.move_direction("right")
         z2.move_direction("right")
-        action = 2
+        action = 3
+        moving = True
 
     if keys[pygame.K_a]:
         mf.move_direction("left")
         mw.move_direction("left")
         z1.move_direction("left")
         z2.move_direction("left")
-        action = 3
+        action = 4
+        moving = True
 
     if keys[pygame.K_w]:
         mf.move_direction("up")
         mw.move_direction("up")
         z1.move_direction("up")
         z2.move_direction("up")
-        action = 1
+        action = 2
+        moving = True
 
     if keys[pygame.K_s]:
         mf.move_direction("down")
         mw.move_direction("down")
         z1.move_direction("down")
         z2.move_direction("down")
-        action = 0
+        action = 1
+        moving = True
+
+    
 
     pos = (mw.x, mw.y)
 
