@@ -2,6 +2,7 @@ import pygame
 import math
 import time
 import playerspritesheet
+import zombiespritesheet
 from mazewalls import Mazewalls
 from mazefloor import Mazefloors
 from player import Player
@@ -70,6 +71,7 @@ animation_list = []
 zombie_list = []
 animation_steps = [4, 4, 4, 4, 4]
 action = 0
+z1_action = 0
 last_update = pygame.time.get_ticks()
 animation_cooldown = 200
 frame = 0
@@ -94,7 +96,7 @@ for i in (animation_steps):
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
 run = True
 clock = pygame.time.Clock()
-frame = 0
+fr = 0
 
 # -------- Main Program Loop -----------
 while run:
