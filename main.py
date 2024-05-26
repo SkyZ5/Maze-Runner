@@ -59,12 +59,12 @@ filter = pygame.surface.Surface((800, 800))
 filter.fill(pygame.color.Color('Grey'))
 distance_back = 50
 
-#spritesheets
+# Spritesheets
 player_sheet_image = pygame.image.load("player_sheet.png").convert_alpha()
 player_sheet = playerspritesheet.Playerspritesheet(player_sheet_image)
 
 zombie_sheet_image = pygame.image.load("zombie_sheet.png").convert_alpha()
-zombie_sheet = playerspritesheet.Playerspritesheet(player_sheet_image)
+zombie_sheet = playerspritesheet.Playerspritesheet(zombie_sheet_image)
 
 animation_list = []
 zombie_list = []
@@ -82,12 +82,14 @@ for i in (animation_steps):
         step_counter += 1
     animation_list.append(temp_list)
 
+step_counter = 0
+
 for i in (animation_steps):
     temp_list = []
     for z in range(i):
-        temp_list.append(zombie_sheet.get_image(step_counter, 5, (255, 255, 255)))
+        temp_list.append(zombie_sheet.get_image(step_counter, 5, (0, 0, 0)))
         step_counter += 1
-    animation_list.append(temp_list)
+    zombie_list.append(temp_list)
 
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
 run = True
@@ -147,24 +149,28 @@ while run:
         mf.y = (lastPos[1] - 1)
         z1.y = (lastPosz1[1] - 1)
         z2.y = (lastPosz2[1] - 1)
+        z1.init_y -= 1
     if left_mask.overlap(walls_mask, (pos[0] - 350, pos[1] - 385)):
         mw.x = (lastPos[0] - 1)
         mf.x = (lastPos[0] - 1)
         z1.x = (lastPosz1[0] - 1)
         z2.x = (lastPosz2[0] - 1)
+        z1.init_x -= 1
     if right_mask.overlap(walls_mask, (pos[0] - 420, pos[1] - 385)):
         mw.x = (lastPos[0] + 1)
         mf.x = (lastPos[0] + 1)
         z1.x = (lastPosz1[0] + 1)
         z2.x = (lastPosz2[0] + 1)
+        z1.init_x += 1
     if bottom_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 420)):
         mw.y = (lastPos[1] + 1)
         mf.y = (lastPos[1] + 1)
         z1.y = (lastPosz1[1] + 1)
         z2.y = (lastPosz2[1] + 1)
+        z1.init_y += 1
     
     # Mob Movement
-    z1.move_towards_player(p)
+    z1_action = z1.move_towards_player(p)
 
     if z1_mask.overlap(walls_mask, (pos[0] - z1.x, pos[1] - z1.y)):
         z1.x = z1.init_x
@@ -190,30 +196,39 @@ while run:
             run = False
 
 
-
-    ##  ----- NO BLIT ZONE END  ----- ##
-
-    ## FILL SCREEN, and BLIT here ##
+    #Blits
     screen.fill((r, g, b))
     screen.blit(mw.image, mw.rect)
     screen.blit(mf.image, mf.rect)
-    screen.blit(z1.image, (z1.x, z1.y))
     screen.blit(z2.image, z2.rect)
-    if not filtered:
-        filter.blit(light, (-100, -100))
-        filtered = True
-    screen.blit(filter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
-    health_bar.hp = health
-    health_bar.draw(screen)
-    screen.blit(health_bar.image, health_bar.rect)
 
+    # Animation
     current_time = pygame.time.get_ticks()
+
+    if current_time - last_update >= animation_cooldown:
+        frame += 1
+        last_update = current_time
+        if frame >= len(zombie_list[z1_action]):
+            frame = 0
+    screen.blit(zombie_list[z1_action][frame], (z1.x, z1.y))
+
     if current_time - last_update >= animation_cooldown:
         frame += 1
         last_update = current_time
         if frame >= len(animation_list[action]):
             frame = 0
     screen.blit(animation_list[action][frame], (350, 350))
+
+    # Lighting
+    if not filtered:
+        filter.blit(light, (-100, -100))
+        filtered = True
+    screen.blit(filter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+
+    # Health
+    health_bar.hp = health
+    health_bar.draw(screen)
+    screen.blit(health_bar.image, health_bar.rect)
 
     pygame.display.update()
     pygame.display.flip()

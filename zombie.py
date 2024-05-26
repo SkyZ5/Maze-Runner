@@ -54,4 +54,15 @@ class Zombie:
             self.rect.y += dy * self.speed
             self.x += dx * self.speed
             self.y += dy * self.speed
-
+        if dist > 300:
+            return 0
+        if dx < 0 and dx < dy:
+            return 3
+        if dx > 0 and dx > dy:
+            return 4
+        if dy >= 0:
+            return 1
+        if dy < 0:
+            return 2
+        
+        
