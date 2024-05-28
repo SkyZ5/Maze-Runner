@@ -2,7 +2,6 @@ import pygame
 import math
 import time
 import playerspritesheet
-import zombiespritesheet
 from mazewalls import Mazewalls
 from mazefloor import Mazefloors
 from player import Player
@@ -33,8 +32,6 @@ b = 54
 
 
 # render the text for later
-
-
 mf = Mazefloors(0, -3200)
 mw = Mazewalls(0, -3200)
 p = Player(350, 350)
@@ -77,7 +74,7 @@ animation_cooldown = 200
 frame = 0
 step_counter = 0
 
-for i in (animation_steps):
+for i in animation_steps:
     temp_list = []
     for z in range(i):
         temp_list.append(player_sheet.get_image(step_counter, 5, (255, 255, 255)))
@@ -86,7 +83,7 @@ for i in (animation_steps):
 
 step_counter = 0
 
-for i in (animation_steps):
+for i in animation_steps:
     temp_list = []
     for z in range(i):
         temp_list.append(zombie_sheet.get_image(step_counter, 5, (0, 0, 0)))
@@ -96,7 +93,6 @@ for i in (animation_steps):
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
 run = True
 clock = pygame.time.Clock()
-fr = 0
 
 # -------- Main Program Loop -----------
 while run:
@@ -137,8 +133,6 @@ while run:
         z2.move_direction("down")
         action = 1
         moving = True
-
-    
 
     pos = (mw.x, mw.y)
 
@@ -192,13 +186,23 @@ while run:
         health -= 10
 
     # --- Main event loop
-    ## ----- NO BLIT ZONE START ----- ##
     for event in pygame.event.get():  
         if event.type == pygame.QUIT:  
             run = False
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            x, y = pygame.mouse.get_pos()
+            temp_x = x - 400
+            temp_y = y - 400
+            if temp_x < 0:
+                print("left")
+            if temp_x > 0:
+                print("right")
+            if temp_y > 0:
+                print("down")
+            if temp_y < 0:
+                print("up")
 
-
-    #Blits
+    # Blit
     screen.fill((r, g, b))
     screen.blit(mw.image, mw.rect)
     screen.blit(mf.image, mf.rect)
