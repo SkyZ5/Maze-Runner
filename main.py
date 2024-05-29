@@ -1,7 +1,7 @@
 import pygame
 import math
 import time
-import playerspritesheet
+import spritesheet
 from mazewalls import Mazewalls
 from mazefloor import Mazefloors
 from player import Player
@@ -46,9 +46,11 @@ bottom = pygame.Surface((10, 10))
 walls_mask = mw.image_mask
 player_mask = p.image_mask
 z1_mask = z1.image_mask
+z2_mask = z2.image_mask
 wmask_image = walls_mask.to_surface()
 pmask_image = player_mask.to_surface()
 z1_image = z1_mask.to_surface()
+z2_image = z2_mask.to_surface()
 top_mask = pygame.mask.from_surface(top)
 left_mask = pygame.mask.from_surface(left)
 right_mask = pygame.mask.from_surface(right)
@@ -59,16 +61,17 @@ distance_back = 50
 
 # Spritesheets
 player_sheet_image = pygame.image.load("player_sheet.png").convert_alpha()
-player_sheet = playerspritesheet.Playerspritesheet(player_sheet_image)
+player_sheet = spritesheet.Spritesheet(player_sheet_image)
 
 zombie_sheet_image = pygame.image.load("zombie_sheet.png").convert_alpha()
-zombie_sheet = playerspritesheet.Playerspritesheet(zombie_sheet_image)
+zombie_sheet = spritesheet.Spritesheet(zombie_sheet_image)
 
 animation_list = []
 zombie_list = []
 animation_steps = [4, 4, 4, 4, 4]
 action = 0
 z1_action = 0
+z2_action = 0
 last_update = pygame.time.get_ticks()
 animation_cooldown = 200
 frame = 0
@@ -135,6 +138,9 @@ while run:
         moving = True
 
     pos = (mw.x, mw.y)
+    lastPos = [mw.x, mw.y]
+    lastPosz1 = [z1.x, z1.y]
+    lastPosz2 = [z2.x, z2.y]
 
     if top_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 350)) is None:
         lastPos = [mw.x, mw.y]
@@ -146,27 +152,32 @@ while run:
         z1.y = (lastPosz1[1] - 1)
         z2.y = (lastPosz2[1] - 1)
         z1.init_y -= 1
+        z2.init_y -= 1
     if left_mask.overlap(walls_mask, (pos[0] - 350, pos[1] - 385)):
         mw.x = (lastPos[0] - 1)
         mf.x = (lastPos[0] - 1)
         z1.x = (lastPosz1[0] - 1)
         z2.x = (lastPosz2[0] - 1)
         z1.init_x -= 1
+        z2.init_x -= 1
     if right_mask.overlap(walls_mask, (pos[0] - 420, pos[1] - 385)):
         mw.x = (lastPos[0] + 1)
         mf.x = (lastPos[0] + 1)
         z1.x = (lastPosz1[0] + 1)
         z2.x = (lastPosz2[0] + 1)
         z1.init_x += 1
+        z2.init_x += 1
     if bottom_mask.overlap(walls_mask, (pos[0] - 385, pos[1] - 420)):
         mw.y = (lastPos[1] + 1)
         mf.y = (lastPos[1] + 1)
         z1.y = (lastPosz1[1] + 1)
         z2.y = (lastPosz2[1] + 1)
         z1.init_y += 1
+        z2.init_y += 1
     
     # Mob Movement
     z1_action = z1.move_towards_player(p)
+    z2_action = z2.move_towards_player(p)
 
     if z1_mask.overlap(walls_mask, (pos[0] - z1.x, pos[1] - z1.y)):
         z1.x = z1.init_x
@@ -185,6 +196,22 @@ while run:
         z1.y += 100
         health -= 10
 
+    if z2_mask.overlap(walls_mask, (pos[0] - z2.x, pos[1] - z2.y)):
+        z2.x = z2.init_x
+        z2.y = z2.init_y
+    if z2_mask.overlap(left_mask, (350 - z2.x, 385 - z2.y)):
+        z2.x -= 100
+        health -= 10
+    if z2_mask.overlap(right_mask, (420 - z2.x, 385 - z2.y)):
+        z2.x += 100
+        health -= 10
+    if z2_mask.overlap(top_mask, (385 - z2.x, 350 - z2.y)):
+        z2.x -= 100
+        health -= 10
+    if z2_mask.overlap(bottom_mask, (385 - z2.x, 420 - z2.y)):
+        z2.y += 100
+        health -= 10
+
     # --- Main event loop
     for event in pygame.event.get():  
         if event.type == pygame.QUIT:  
@@ -193,20 +220,19 @@ while run:
             x, y = pygame.mouse.get_pos()
             temp_x = x - 400
             temp_y = y - 400
-            if temp_x < 0:
+            if temp_x < 0 and abs(temp_x) >= abs(temp_y):
                 print("left")
-            if temp_x > 0:
+            elif temp_x > 0 and temp_x >= abs(temp_y):
                 print("right")
-            if temp_y > 0:
+            elif temp_y > 0:
                 print("down")
-            if temp_y < 0:
+            elif temp_y < 0:
                 print("up")
 
     # Blit
     screen.fill((r, g, b))
     screen.blit(mw.image, mw.rect)
     screen.blit(mf.image, mf.rect)
-    screen.blit(z2.image, z2.rect)
 
     # Animation
     current_time = pygame.time.get_ticks()
@@ -217,6 +243,13 @@ while run:
         if frame >= len(zombie_list[z1_action]):
             frame = 0
     screen.blit(zombie_list[z1_action][frame], (z1.x, z1.y))
+
+    if current_time - last_update >= animation_cooldown:
+        frame += 1
+        last_update = current_time
+        if frame >= len(zombie_list[z2_action]):
+            frame = 0
+    screen.blit(zombie_list[z2_action][frame], (z2.x, z2.y))
 
     if current_time - last_update >= animation_cooldown:
         frame += 1
