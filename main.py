@@ -24,14 +24,9 @@ size = (SCREEN_WIDTH, SCREEN_HEIGHT)
 screen = pygame.display.set_mode(size)
 light = pygame.image.load('circle.png')
 filtered = False
-
-
 r = 118
 g = 59
 b = 54
-
-
-# render the text for later
 mf = Mazefloors(0, -3200)
 mw = Mazewalls(0, -3200)
 p = Player(350, 350)
@@ -43,6 +38,7 @@ top = pygame.Surface((10, 10))
 left = pygame.Surface((10, 10))
 right = pygame.Surface((10, 10))
 bottom = pygame.Surface((10, 10))
+sword_hitbox = pygame.Surface((10, 10))
 walls_mask = mw.image_mask
 player_mask = p.image_mask
 z1_mask = z1.image_mask
@@ -55,9 +51,12 @@ top_mask = pygame.mask.from_surface(top)
 left_mask = pygame.mask.from_surface(left)
 right_mask = pygame.mask.from_surface(right)
 bottom_mask = pygame.mask.from_surface(bottom)
+sword_mask = pygame.mask.from_surface(sword_hitbox)
 filter = pygame.surface.Surface((800, 800))
 filter.fill(pygame.color.Color('Grey'))
 distance_back = 50
+z1_health = 100
+z2_health = 100
 
 # Spritesheets
 player_sheet_image = pygame.image.load("player_sheet.png").convert_alpha()
@@ -222,12 +221,28 @@ while run:
             temp_y = y - 400
             if temp_x < 0 and abs(temp_x) >= abs(temp_y):
                 print("left")
+                if sword_mask.overlap(z1_mask, (z1.x - 315, z1.y - 385)):
+                    print("hit")
+                if sword_mask.overlap(z1_mask, (z2.x - 315, z2.y - 385)):
+                    print("hit")
             elif temp_x > 0 and temp_x >= abs(temp_y):
                 print("right")
+                if sword_mask.overlap(z1_mask, (z1.x - 445, z1.y - 385)):
+                    print("hit")
+                if sword_mask.overlap(z2_mask, (z2.x - 445, z2.y - 385)):
+                    print("hit")
             elif temp_y > 0:
                 print("down")
+                if sword_mask.overlap(z1_mask, (z1.x - 385, z1.y - 445)):
+                    print("hit")
+                if sword_mask.overlap(z2_mask, (z2.x - 385, z2.y - 445)):
+                    print("hit")
             elif temp_y < 0:
                 print("up")
+                if sword_mask.overlap(z1_mask, (z1.x - 385, z1.y - 315)):
+                    print("hit")
+                if sword_mask.overlap(z2_mask, (z2.x - 385, z2.y - 315)):
+                    print("hit")
 
     # Blit
     screen.fill((r, g, b))
