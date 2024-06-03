@@ -59,6 +59,7 @@ z1_health = 100
 z2_health = 100
 z1_dead = False
 z2_dead = False
+died = False
 
 # Spritesheets
 player_sheet_image = pygame.image.load("player_sheet.png").convert_alpha()
@@ -103,7 +104,8 @@ while run:
     clock.tick(165)
 
     # Movement
-    keys = pygame.key.get_pressed()  # checking pressed keys
+    if not died:
+        keys = pygame.key.get_pressed()  # checking pressed keys
 
     action = 0
 
@@ -176,12 +178,12 @@ while run:
         z2.y = (lastPosz2[1] + 1)
         z1.init_y += 1
         z2.init_y += 1
-    
+
     # Mob Movement
 
     if not z1_dead:
-
-        z1_action = z1.move_towards_player(p)
+        if not died:
+            z1_action = z1.move_towards_player(p)
 
         if z1_mask.overlap(walls_mask, (pos[0] - z1.x, pos[1] - z1.y)):
             z1.x = z1.init_x
@@ -198,10 +200,13 @@ while run:
         elif z1_mask.overlap(bottom_mask, (385 - z1.x, 420 - z1.y)):
             z1.y += 100
             health -= 10
+        if health <= 0:
+            died = True
 
     if not z2_dead:
 
-        z2_action = z2.move_towards_player(p)
+        if not died:
+            z2_action = z2.move_towards_player(p)
 
         if z2_mask.overlap(walls_mask, (pos[0] - z2.x, pos[1] - z2.y)):
             z2.x = z2.init_x
@@ -225,7 +230,7 @@ while run:
         if current_time - z1_died_time >= 5000:
             z1_dead = False
             z1_health = 100
-            z1.x, z1.y = z1.init_x, z1.init_y 
+            z1.x, z1.y = z1.init_x, z1.init_y
 
     if z2_dead:
         current_time = pygame.time.get_ticks()
@@ -236,8 +241,8 @@ while run:
             z2.x, z2.y = z2.init_x, z2.init_y
 
     # --- Main event loop
-    for event in pygame.event.get():  
-        if event.type == pygame.QUIT:  
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
             run = False
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             x, y = pygame.mouse.get_pos()
