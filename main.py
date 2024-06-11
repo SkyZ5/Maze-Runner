@@ -267,70 +267,69 @@ while run:
             x, y = pygame.mouse.get_pos()
             temp_x = x - 400
             temp_y = y - 400
-            if temp_x < 0 and abs(temp_x) >= abs(temp_y):
-                print("left")
-                combat_action = 1
+            if not attacking:
+                if temp_x < 0 and abs(temp_x) >= abs(temp_y):
+                    print("left")
+                    combat_action = 1
+                    if sword_mask.overlap(z1_mask, (z1.x - 315, z1.y - 385)):
+                        print("hit")
+                        z1_health -= 50
+                        if z1_health <= 0:
+                            z1_dead = True
+                            z1_died_time = pygame.time.get_ticks()
+                    if sword_mask.overlap(z2_mask, (z2.x - 315, z2.y - 385)):
+                        print("hit")
+                        z2_health -= 50
+                        if z2_health <= 0:
+                            z2_dead = True
+                            z2_died_time = pygame.time.get_ticks()
+                elif temp_x > 0 and temp_x >= abs(temp_y):
+                    print("right")
+                    combat_action = 0
+                    if sword_mask.overlap(z1_mask, (z1.x - 445, z1.y - 385)):
+                        print("hit")
+                        z1_health -= 50
+                        if z1_health <= 0:
+                            z1_dead = True
+                            z1_died_time = pygame.time.get_ticks()
+                    if sword_mask.overlap(z2_mask, (z2.x - 445, z2.y - 385)):
+                        print("hit")
+                        z2_health -= 50
+                        if z2_health <= 0:
+                            z2_dead = True
+                            z2_died_time = pygame.time.get_ticks()
+                elif temp_y > 0:
+                    print("down")
+                    combat_action = 2
+                    if sword_mask.overlap(z1_mask, (z1.x - 385, z1.y - 445)):
+                        print("hit")
+                        z1_health -= 50
+                        if z1_health <= 0:
+                            z1_dead = True
+                            z1_died_time = pygame.time.get_ticks()
+                    if sword_mask.overlap(z2_mask, (z2.x - 385, z2.y - 445)):
+                        print("hit")
+                        z2_health -= 50
+                        if z2_health <= 0:
+                            z2_dead = True
+                            z2_died_time = pygame.time.get_ticks()
+                elif temp_y < 0:
+                    print("up")
+                    combat_action = 3
+                    if sword_mask.overlap(z1_mask, (z1.x - 385, z1.y - 315)):
+                        print("hit")
+                        z1_health -= 50
+                        if z1_health <= 0:
+                            z1_dead = True
+                            z1_died_time = pygame.time.get_ticks()
+                    if sword_mask.overlap(z2_mask, (z2.x - 385, z2.y - 315)):
+                        print("hit")
+                        z2_health -= 50
+                        if z2_health <= 0:
+                            z2_dead = True
+                            z2_died_time = pygame.time.get_ticks()
                 attacking = True
-                if sword_mask.overlap(z1_mask, (z1.x - 315, z1.y - 385)):
-                    print("hit")
-                    z1_health -= 50
-                    if z1_health <= 0:
-                        z1_dead = True
-                        z1_died_time = pygame.time.get_ticks()
-                if sword_mask.overlap(z2_mask, (z2.x - 315, z2.y - 385)):
-                    print("hit")
-                    z2_health -= 50
-                    if z2_health <= 0:
-                        z2_dead = True
-                        z2_died_time = pygame.time.get_ticks()
-            elif temp_x > 0 and temp_x >= abs(temp_y):
-                print("right")
-                combat_action = 0
-                attacking = True
-                if sword_mask.overlap(z1_mask, (z1.x - 445, z1.y - 385)):
-                    print("hit")
-                    z1_health -= 50
-                    if z1_health <= 0:
-                        z1_dead = True
-                        z1_died_time = pygame.time.get_ticks()
-                if sword_mask.overlap(z2_mask, (z2.x - 445, z2.y - 385)):
-                    print("hit")
-                    z2_health -= 50
-                    if z2_health <= 0:
-                        z2_dead = True
-                        z2_died_time = pygame.time.get_ticks()
-            elif temp_y > 0:
-                print("down")
-                combat_action = 2
-                attacking = True
-                if sword_mask.overlap(z1_mask, (z1.x - 385, z1.y - 445)):
-                    print("hit")
-                    z1_health -= 50
-                    if z1_health <= 0:
-                        z1_dead = True
-                        z1_died_time = pygame.time.get_ticks()
-                if sword_mask.overlap(z2_mask, (z2.x - 385, z2.y - 445)):
-                    print("hit")
-                    z2_health -= 50
-                    if z2_health <= 0:
-                        z2_dead = True
-                        z2_died_time = pygame.time.get_ticks()
-            elif temp_y < 0:
-                print("up")
-                combat_action = 3
-                attacking = True
-                if sword_mask.overlap(z1_mask, (z1.x - 385, z1.y - 315)):
-                    print("hit")
-                    z1_health -= 50
-                    if z1_health <= 0:
-                        z1_dead = True
-                        z1_died_time = pygame.time.get_ticks()
-                if sword_mask.overlap(z2_mask, (z2.x - 385, z2.y - 315)):
-                    print("hit")
-                    z2_health -= 50
-                    if z2_health <= 0:
-                        z2_dead = True
-                        z2_died_time = pygame.time.get_ticks()
+                combat_last_update = pygame.time.get_ticks()
 
     # Blit
     screen.fill((r, g, b))
@@ -339,7 +338,7 @@ while run:
 
     # Animation
     current_time = pygame.time.get_ticks()
-
+    
     if not z1_dead:
         if current_time - last_update >= animation_cooldown:
             frame += 1
@@ -365,13 +364,15 @@ while run:
         screen.blit(animation_list[action][frame], (350, 350))
 
     if attacking:
-        if current_time - last_update >= animation_cooldown:
+        if current_time - combat_last_update >= animation_cooldown:
             combat_frame += 1
-            last_update = current_time
+            combat_last_update = current_time
             if combat_frame >= len(combat_list[combat_action]):
                 attacking = False
                 combat_frame = 0
-        screen.blit(combat_list[combat_action][combat_frame], (310, 310))
+                print("ran")
+        if attacking:
+            screen.blit(combat_list[combat_action][combat_frame], (310, 310))
 
     # Lighting
     if not filtered:
