@@ -68,16 +68,25 @@ player_sheet = spritesheet.Spritesheet(player_sheet_image)
 zombie_sheet_image = pygame.image.load("zombie_sheet.png").convert_alpha()
 zombie_sheet = spritesheet.Spritesheet(zombie_sheet_image)
 
+player_combat_image = pygame.image.load("player_combat_spritesheet.png").convert_alpha()
+player_combat_sheet = spritesheet.Spritesheet(player_combat_image)
+
 animation_list = []
 zombie_list = []
+combat_list = []
 animation_steps = [4, 4, 4, 4, 4]
+combat_animation_steps = [4, 4, 4, 4]
 action = 0
 z1_action = 0
 z2_action = 0
+combat_action = 0
 last_update = pygame.time.get_ticks()
 animation_cooldown = 200
 frame = 0
+combat_frame = 0
 step_counter = 0
+attacking = False
+
 
 for i in animation_steps:
     temp_list = []
@@ -94,6 +103,16 @@ for i in animation_steps:
         temp_list.append(zombie_sheet.get_image(step_counter, 5, (0, 0, 0)))
         step_counter += 1
     zombie_list.append(temp_list)
+
+step_counter = 0
+
+for i in combat_animation_steps:
+    temp_list = []
+    for z in range(i):
+        temp_list.append(player_combat_sheet.get_image_32(step_counter, 5, (0, 0, 0)))
+        step_counter += 1
+    combat_list.append(temp_list)
+
 
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
 run = True
@@ -250,6 +269,8 @@ while run:
             temp_y = y - 400
             if temp_x < 0 and abs(temp_x) >= abs(temp_y):
                 print("left")
+                combat_action = 1
+                attacking = True
                 if sword_mask.overlap(z1_mask, (z1.x - 315, z1.y - 385)):
                     print("hit")
                     z1_health -= 50
@@ -264,6 +285,8 @@ while run:
                         z2_died_time = pygame.time.get_ticks()
             elif temp_x > 0 and temp_x >= abs(temp_y):
                 print("right")
+                combat_action = 0
+                attacking = True
                 if sword_mask.overlap(z1_mask, (z1.x - 445, z1.y - 385)):
                     print("hit")
                     z1_health -= 50
@@ -278,6 +301,8 @@ while run:
                         z2_died_time = pygame.time.get_ticks()
             elif temp_y > 0:
                 print("down")
+                combat_action = 2
+                attacking = True
                 if sword_mask.overlap(z1_mask, (z1.x - 385, z1.y - 445)):
                     print("hit")
                     z1_health -= 50
@@ -292,6 +317,8 @@ while run:
                         z2_died_time = pygame.time.get_ticks()
             elif temp_y < 0:
                 print("up")
+                combat_action = 3
+                attacking = True
                 if sword_mask.overlap(z1_mask, (z1.x - 385, z1.y - 315)):
                     print("hit")
                     z1_health -= 50
@@ -329,12 +356,22 @@ while run:
                 frame = 0
         screen.blit(zombie_list[z2_action][frame], (z2.x, z2.y))
 
-    if current_time - last_update >= animation_cooldown:
-        frame += 1
-        last_update = current_time
-        if frame >= len(animation_list[action]):
-            frame = 0
-    screen.blit(animation_list[action][frame], (350, 350))
+    if not attacking:
+        if current_time - last_update >= animation_cooldown:
+            frame += 1
+            last_update = current_time
+            if frame >= len(animation_list[action]):
+                frame = 0
+        screen.blit(animation_list[action][frame], (350, 350))
+
+    if attacking:
+        if current_time - last_update >= animation_cooldown:
+            combat_frame += 1
+            last_update = current_time
+            if combat_frame >= len(combat_list[combat_action]):
+                attacking = False
+                combat_frame = 0
+        screen.blit(combat_list[combat_action][combat_frame], (310, 310))
 
     # Lighting
     if not filtered:
